@@ -1,6 +1,5 @@
-cyordereddict
-bcolz
-pybedtools
-streamlit
+streamlit==1.24.0
 gemini
-pandas
+cyordereddict==1.0.0
+bcolz==1.2.1
+pybedtools==0.9.0
