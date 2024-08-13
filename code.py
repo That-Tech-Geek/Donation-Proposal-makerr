@@ -4,7 +4,7 @@ import requests
 # Function to generate a personalized pitch using the LLaMA API
 def generate_pitch(donor_name, bio, past_donations):
     api_url = "LL-ATLBeF16yEleBb6RmOf9g4uGeN4GOUAqbJXY1RuKpSC4x62ABkeigtFVo01o5m0o"  # Replace with the actual LLaMA API URL
-    api_key = "your-llama-api-key"  # Replace with your actual LLaMA API key
+    api_key = "api.llama.ai/"  # Replace with your actual LLaMA API key
     
     headers = {
         "Authorization": f"Bearer {api_key}",
