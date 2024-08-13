@@ -3,7 +3,7 @@ import gemini
 import pandas as pd
 
 # Initialize Gemini (gemini) API
-gemini.api_key = 'your-gemini-api-key'
+gemini.api_key = 'AIzaSyB0PQ4LCaaSHa5H-3IKyoD0-9t8-YbFNcM'
 
 # Function to generate personalized pitch using Gemini API
 def generate_pitch(donor_name, bio, past_donations):
