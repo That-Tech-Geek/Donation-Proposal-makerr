@@ -1,2 +1,4 @@
-streamlit
-gemini
+streamlit==1.24.0
+openai==0.27.8
+llama-index==0.1.1  # Replace with the correct package for LLaMA if applicable
+requests==2.28.1
