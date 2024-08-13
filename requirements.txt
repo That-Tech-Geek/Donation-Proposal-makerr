@@ -1,3 +1,6 @@
+cyordereddict
+bcolz
+pybedtools
 streamlit
 gemini
 pandas
