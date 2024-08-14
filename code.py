@@ -21,8 +21,8 @@ def generate_pitch(name, cause, impact, personal_message):
     try:
         # Use the OpenAI API call to generate the pitch
         response = openai.Completion.create(
+            engine="text-davinci-003",
             prompt=prompt,
-            model="text-davinci-003",
             max_tokens=150,
             temperature=0.7,
         )
