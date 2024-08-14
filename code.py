@@ -1,8 +1,8 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 
 # Initialize OpenAI API using Streamlit secrets
-openai.api_key = st.secrets["openai_api_key"]
+OpenAI.api_key = st.secrets["OpenAI_api_key"]
 
 def generate_pitch(name, cause, impact, personal_message):
     prompt = f"""
@@ -17,7 +17,7 @@ def generate_pitch(name, cause, impact, personal_message):
     """
 
     try:
-        response = openai.Completion.create(
+        response = OpenAI.Completion.create(
             model="text-davinci-003",  # Replace with the correct model
             prompt=prompt,
             max_tokens=150,
@@ -25,7 +25,7 @@ def generate_pitch(name, cause, impact, personal_message):
         )
         pitch = response.choices[0].text.strip()
         return pitch
-    except openai.error.OpenAIError as e:
+    except OpenAI.error.OpenAIError as e:
         return f"An OpenAI error occurred: {e}"
     except Exception as e:
         return f"An unexpected error occurred: {e}"
