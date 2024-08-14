@@ -1,10 +1,9 @@
 import streamlit as st
-from openai import OpenAI
+import openai
 
 # Initialize OpenAI API using Streamlit secrets
-OpenAI.api_key = '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'
+openai.api_key = st.secrets["openai_api_key"]
 
-# Function to generate the custom pitch using the updated OpenAI API
 def generate_pitch(name, cause, impact, personal_message):
     prompt = f"""
     Write a personalized donation pitch for a potential donor:
@@ -18,21 +17,18 @@ def generate_pitch(name, cause, impact, personal_message):
     """
 
     try:
-        # Use the updated OpenAI API call to generate the pitch
-        response = OpenAI.ChatCompletion.create(
-            model="gpt-4",  # Replace with the appropriate model
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant that writes donation pitches."},
-                {"role": "user", "content": prompt},
-            ],
+        response = openai.Completion.create(
+            model="text-davinci-003",  # Replace with the correct model
+            prompt=prompt,
             max_tokens=150,
             temperature=0.7,
         )
-
-        pitch = response.choices[0].message['content'].strip()
+        pitch = response.choices[0].text.strip()
         return pitch
+    except openai.error.OpenAIError as e:
+        return f"An OpenAI error occurred: {e}"
     except Exception as e:
-        return f"An error occurred: {e}"
+        return f"An unexpected error occurred: {e}"
 
 # Streamlit UI
 st.title("Custom Donation Pitch Generator")
