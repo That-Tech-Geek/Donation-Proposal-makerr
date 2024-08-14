@@ -2,7 +2,7 @@ import streamlit as st
 from openai import OpenAI
 
 # Initialize OpenAI API using Streamlit secrets
-openai.api_key = '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'
+OpenAI.api_key = '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'
 
 # Function to generate the custom pitch using the updated OpenAI API
 def generate_pitch(name, cause, impact, personal_message):
@@ -19,7 +19,7 @@ def generate_pitch(name, cause, impact, personal_message):
 
     try:
         # Use the updated OpenAI API call to generate the pitch
-        response = openai.ChatCompletion.create(
+        response = OpenAI.ChatCompletion.create(
             model="gpt-4",  # Replace with the appropriate model
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that writes donation pitches."},
