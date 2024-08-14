@@ -18,7 +18,7 @@ def generate_pitch(name, cause, impact, personal_message):
 
     try:
         response = OpenAI.Completion.create(
-            model="text-davinci-003",  # Replace with the correct model
+            model="gpt-3.5-turbo",  # Replace with the correct model
             prompt=prompt,
             max_tokens=150,
             temperature=0.7,
