@@ -1,9 +1,9 @@
 import streamlit as st
-from openai import OpenAI  # Import the OpenAI class
+import openai  # Import the openai module
 
 # Initialize OpenAI API using Streamlit secrets
 api_key = st.secrets["openai_api_key"]
-openai_client = OpenAI(api_key=api_key)
+openai.api_key = api_key  # Set the API key
 
 # Function to generate the custom pitch using the OpenAI API
 def generate_pitch(name, cause, impact, personal_message):
@@ -20,7 +20,7 @@ def generate_pitch(name, cause, impact, personal_message):
 
     try:
         # Use the OpenAI API call to generate the pitch
-        response = openai_client.Completion.create(
+        response = openai.Completion.create(
             model="text-davinci-003",  # Replace with the correct model
             prompt=prompt,
             max_tokens=150,
