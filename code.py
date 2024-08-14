@@ -2,7 +2,7 @@ import streamlit as st
 from openai import OpenAI  # Import the OpenAI class
 
 # Initialize OpenAI API using Streamlit secrets
-api_key = st.secrets["openai_api_key"]
+api_key = st.secrets["openai"]["api_key"]
 openai_client = OpenAI(api_key=api_key)
 
 # Function to generate the custom pitch using the OpenAI API
@@ -19,16 +19,17 @@ def generate_pitch(name, cause, impact, personal_message):
     """
 
     try:
-        # Assuming OpenAI class has a method named 'generate_text' for text generation
-        response = openai_client.generate_text(
+        # Replace 'create_prompt_response' with the actual method for generating text
+        response = openai_client.create_prompt_response(
             prompt=prompt,
             max_tokens=150,
             temperature=0.7
         )
-        pitch = response.get('text', '').strip()  # Adjust based on actual response structure
+        # Adjust based on actual response structure
+        pitch = response['choices'][0]['text'].strip()  
         return pitch
     except AttributeError as e:
-        return f"An error occurred: {e} - Check if 'generate_text' method exists."
+        return f"An error occurred: {e} - Check if 'create_prompt_response' method exists."
     except Exception as e:
         return f"An unexpected error occurred: {e}"
 
