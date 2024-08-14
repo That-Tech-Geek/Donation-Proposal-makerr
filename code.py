@@ -2,7 +2,7 @@ import streamlit as st
 from openai import OpenAI
 
 # Initialize OpenAI API using Streamlit secrets
-OpenAI.api_key = st.secrets["OpenAI_api_key"]
+OpenAI.api_key = st.secrets["openai_api_key"]
 
 def generate_pitch(name, cause, impact, personal_message):
     prompt = f"""
