@@ -21,7 +21,10 @@ def generate_pitch(name, cause, impact, personal_message):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
-        max_tokens=150
+        max_tokens=150,
+        n=1,
+        stop=None,
+        temperature=0.7,
     )
     
     pitch = response.choices[0].text.strip()
@@ -31,15 +34,16 @@ def generate_pitch(name, cause, impact, personal_message):
 st.title("Custom Donation Pitch Generator")
 
 # Input fields for the donor information
-name = st.text_input("Donor's Name", "")
-cause = st.text_input("Cause", "")
-impact = st.text_area("Describe the Impact", "")
-personal_message = st.text_area("Add a Personal Message", "")
+name = st.text_input("Donor's Name")
+cause = st.text_input("Cause")
+impact = st.text_area("Describe the Impact")
+personal_message = st.text_area("Add a Personal Message")
 
 # Generate pitch when the button is clicked
 if st.button("Generate Pitch"):
     if name and cause and impact and personal_message:
-        pitch = generate_pitch(name, cause, impact, personal_message)
+        with st.spinner("Generating your custom pitch..."):
+            pitch = generate_pitch(name, cause, impact, personal_message)
         st.subheader("Generated Pitch")
         st.write(pitch)
     else:
