@@ -2,7 +2,7 @@ import streamlit as st
 from openai import OpenAI  # Import the OpenAI class
 
 # Initialize OpenAI API using Streamlit secrets
-api_key = st.secrets["openai"]["api_key"]
+api_key = st.secrets["openai_api_key"]
 openai_client = OpenAI(api_key=api_key)
 
 # Function to generate the custom pitch using the OpenAI API
