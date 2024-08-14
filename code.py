@@ -4,7 +4,7 @@ import openai
 # Initialize OpenAI API (replace 'your-openai-api-key' with your actual OpenAI API key)
 openai.api_key = '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'
 
-# Function to generate the custom pitch using GPT-3
+# Function to generate the custom pitch using the new OpenAI API
 def generate_pitch(name, cause, impact, personal_message):
     prompt = f"""
     Write a personalized donation pitch for a potential donor:
@@ -17,17 +17,18 @@ def generate_pitch(name, cause, impact, personal_message):
     Pitch:
     """
     
-    # Call the OpenAI API to generate the pitch
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
+    # Use the updated OpenAI API call to generate the pitch
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt},
+        ],
         max_tokens=150,
-        n=1,
-        stop=None,
         temperature=0.7,
     )
     
-    pitch = response.choices[0].text.strip()
+    pitch = response['choices'][0]['message']['content'].strip()
     return pitch
 
 # Streamlit UI
