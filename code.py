@@ -1,5 +1,5 @@
 import streamlit as st
-import openai  # Import the openai module
+import openai
 
 # Initialize OpenAI API using Streamlit secrets
 api_key = st.secrets["openai_api_key"]
@@ -20,13 +20,13 @@ def generate_pitch(name, cause, impact, personal_message):
 
     try:
         # Use the OpenAI API call to generate the pitch
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
+        response = openai.Completion.create(
+            prompt=prompt,
+            model="text-davinci-003",
             max_tokens=150,
             temperature=0.7,
         )
-        pitch = response.choices[0].message.content.strip()
+        pitch = response.choices[0].text.strip()
         return pitch
     except Exception as e:
         return f"An error occurred: {e}"
