@@ -1,48 +1,46 @@
 import streamlit as st
-import requests
+import openai
 
-# Function to generate a personalized pitch using the LLaMA API
-def generate_pitch(donor_name, bio, past_donations):
-    api_url = "LL-ATLBeF16yEleBb6RmOf9g4uGeN4GOUAqbJXY1RuKpSC4x62ABkeigtFVo01o5m0o"  # Replace with the actual LLaMA API URL
-    api_key = "api.llama.ai/"  # Replace with your actual LLaMA API key
+# Initialize OpenAI API (replace 'your-openai-api-key' with your actual OpenAI API key)
+openai.api_key = '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'
+
+# Function to generate the custom pitch using GPT-3
+def generate_pitch(name, cause, impact, personal_message):
+    prompt = f"""
+    Write a personalized donation pitch for a potential donor:
     
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
+    Donor Name: {name}
+    Cause: {cause}
+    Impact: {impact}
+    Personal Message: {personal_message}
     
-    payload = {
-        "prompt": f"""
-        Create a personalized donation request pitch for the following donor:
-        Name: {donor_name}
-        Bio: {bio}
-        Past Donations: ${past_donations}
-        The pitch should be engaging and encourage a donation.
-        """,
-        "max_tokens": 150
-    }
+    Pitch:
+    """
     
-    response = requests.post(api_url, headers=headers, json=payload)
-    response.raise_for_status()
-    return response.json()["choices"][0]["text"].strip()
+    # Call the OpenAI API to generate the pitch
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=150
+    )
+    
+    pitch = response.choices[0].text.strip()
+    return pitch
 
 # Streamlit UI
-st.title("Donation Pitch Chatbot")
+st.title("Custom Donation Pitch Generator")
 
-st.write("This chatbot helps generate a personalized donation request pitch.")
+# Input fields for the donor information
+name = st.text_input("Donor's Name", "")
+cause = st.text_input("Cause", "")
+impact = st.text_area("Describe the Impact", "")
+personal_message = st.text_area("Add a Personal Message", "")
 
-# User input
-donor_name = st.text_input("Donor Name")
-donor_bio = st.text_area("Donor Bio")
-past_donations = st.number_input("Past Donations (in USD)", min_value=0)
-
+# Generate pitch when the button is clicked
 if st.button("Generate Pitch"):
-    if donor_name and donor_bio:
-        try:
-            pitch = generate_pitch(donor_name, donor_bio, past_donations)
-            st.subheader("Generated Donation Pitch:")
-            st.write(pitch)
-        except requests.exceptions.RequestException as e:
-            st.error(f"An error occurred: {e}")
+    if name and cause and impact and personal_message:
+        pitch = generate_pitch(name, cause, impact, personal_message)
+        st.subheader("Generated Pitch")
+        st.write(pitch)
     else:
-        st.warning("Please provide all required details.")
+        st.error("Please fill in all fields before generating the pitch.")
