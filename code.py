@@ -20,13 +20,11 @@ def generate_pitch(name, cause, impact, personal_message):
 
     try:
         # Use the OpenAI API call to generate the pitch
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=prompt,
-            max_tokens=150,
-            temperature=0.7,
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
         )
-        pitch = response.choices[0].text.strip()
+        pitch = response.choices[0].message.content.strip()
         return pitch
     except Exception as e:
         return f"An error occurred: {e}"
