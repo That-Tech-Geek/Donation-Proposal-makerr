@@ -19,7 +19,7 @@ def generate_pitch(name, cause, impact, personal_message):
     
     # Use the updated OpenAI API call to generate the pitch
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt},
