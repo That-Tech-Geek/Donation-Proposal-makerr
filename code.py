@@ -1,12 +1,17 @@
 import streamlit as st
-import gemini
+from google.cloud import dialogflow_v2 as dialogflow
+from google.oauth2 import service_account
 
-# Initialize the Gemini API using Streamlit secrets
-api_key = st.secrets["openai_api_key"]
-gemini.api_key = api_key  # Set the API key
+# Initialize Dialogflow client using Streamlit secrets
+credentials = service_account.Credentials.from_service_account_info(st.secrets["dialogflow_credentials"])
+client = dialogflow.SessionsClient(credentials=credentials)
+project_id = st.secrets["dialogflow_project_id"]
 
-# Function to generate the custom pitch using the Gemini API
+# Function to generate the custom pitch using Dialogflow API
 def generate_pitch(name, cause, impact, personal_message):
+    session_id = "unique-session-id"  # You can generate a unique session ID if needed
+    session = client.session_path(project_id, session_id)
+
     prompt = f"""
     Write a personalized donation pitch for a potential donor:
 
@@ -18,13 +23,12 @@ def generate_pitch(name, cause, impact, personal_message):
     Pitch:
     """
 
+    text_input = dialogflow.TextInput(text=prompt, language_code='en')
+    query_input = dialogflow.QueryInput(text=text_input)
+
     try:
-        # Use the Gemini API call to generate the pitch
-        response = gemini.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
-        )
-        pitch = response.choices[0].message.content.strip()
+        response = client.detect_intent(session=session, query_input=query_input)
+        pitch = response.query_result.fulfillment_text.strip()
         return pitch
     except Exception as e:
         return f"An error occurred: {e}"
