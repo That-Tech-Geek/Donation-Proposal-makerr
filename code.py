@@ -1,11 +1,11 @@
 import streamlit as st
-import openai
+import gemini
 
-# Initialize OpenAI API using Streamlit secrets
+# Initialize gemini API using Streamlit secrets
 api_key = st.secrets["openai_api_key"]
-openai.api_key = api_key  # Set the API key
+gemini.api_key = api_key  # Set the API key
 
-# Function to generate the custom pitch using the OpenAI API
+# Function to generate the custom pitch using the gemini API
 def generate_pitch(name, cause, impact, personal_message):
     prompt = f"""
     Write a personalized donation pitch for a potential donor:
@@ -19,8 +19,8 @@ def generate_pitch(name, cause, impact, personal_message):
     """
 
     try:
-        # Use the OpenAI API call to generate the pitch
-        response = openai.ChatCompletion.create(
+        # Use the gemini API call to generate the pitch
+        response = gemini.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
         )
