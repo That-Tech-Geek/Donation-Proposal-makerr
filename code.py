@@ -1,30 +1,25 @@
 import streamlit as st
-import nltk
-from nltk.tokenize import word_tokenize
-from nltk.corpus import wordnet
+import spacy
 
-# Download required NLTK data files (do this once)
-nltk.download('punkt')
-nltk.download('wordnet')
+# Load spaCy model
+nlp = spacy.load('en_core_web_sm')
 
-# Function to generate a simple response
+# Function to generate a simple response using spaCy
 def generate_response(user_input):
-    tokens = word_tokenize(user_input.lower())
-    synonyms = set()
+    doc = nlp(user_input)
+    entities = set()
 
-    # Find synonyms for each token
-    for token in tokens:
-        for syn in wordnet.synsets(token):
-            for lemma in syn.lemmas():
-                synonyms.add(lemma.name())
+    # Extract named entities from the input
+    for ent in doc.ents:
+        entities.add(ent.text)
 
-    if synonyms:
-        return f"Interesting! You mentioned: {', '.join(synonyms)}"
+    if entities:
+        return f"Interesting! You mentioned: {', '.join(entities)}"
     else:
         return "Sorry, I didn't quite understand that."
 
 # Streamlit UI
-st.title("Streamlit Chatbot with NLTK")
+st.title("Streamlit Chatbot with spaCy")
 
 # Input field for user message
 user_message = st.text_input("You:")
