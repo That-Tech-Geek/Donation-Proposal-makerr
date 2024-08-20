@@ -1,27 +1,20 @@
 import streamlit as st
-from chatterbot import ChatBot
-from chatterbot.trainers import ChatterBotCorpusTrainer
-
-# Initialize the chatbot
-@st.cache_resource
-def create_chatbot():
-    bot = ChatBot("StreamlitBot", logic_adapters=["chatterbot.logic.BestMatch"])
-    trainer = ChatterBotCorpusTrainer(bot)
-    trainer.train("chatterbot.corpus.english")  # Train the bot with the English corpus
-    return bot
-
-chatbot = create_chatbot()
-
-# Function to get a response from the chatbot
-def get_response(user_input):
-    response = chatbot.get_response(user_input)
-    return str(response)
+import requests
 
 # Streamlit UI
-st.title("Streamlit Chatbot")
+st.title("Streamlit Chatbot with Rasa")
 
 # Input field for user message
 user_message = st.text_input("You:")
+
+# Function to get a response from Rasa
+def get_response(user_input):
+    response = requests.post(
+        "http://localhost:5005/webhooks/rest/webhook",
+        json={"message": user_input}
+    )
+    response_json = response.json()
+    return response_json[0]['text'] if response_json else "No response"
 
 # Display the chatbot response
 if st.button("Send"):
