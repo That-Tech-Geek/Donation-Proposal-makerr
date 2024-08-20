@@ -23,8 +23,8 @@ def generate_pitch(name, cause, impact, personal_message):
     Pitch:
     """
 
-    text_input = dialogflow.TextInput(text=prompt, language_code='en')
-    query_input = dialogflow.QueryInput(text=text_input)
+    text_input = dialogflow.TextInput(text=prompt)
+    query_input = dialogflow.QueryInput(text=text_input, language_code='en')  # language_code should be passed here
 
     try:
         response = client.detect_intent(session=session, query_input=query_input)
