@@ -1,17 +1,18 @@
 import streamlit as st
-from google.cloud import dialogflow_v2 as dialogflow
-from google.oauth2 import service_account
+from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
 
-# Initialize Dialogflow client using Streamlit secrets
-credentials = service_account.Credentials.from_service_account_info(st.secrets["dialogflow_credentials"])
-client = dialogflow.SessionsClient(credentials=credentials)
-project_id = st.secrets["dialogflow_project_id"]
+# Load the LLaMA model and tokenizer
+@st.cache_resource
+def load_model():
+    model_name = "facebook/opt-2.7b"  # Replace with the model you want to use
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(model_name)
+    return pipeline("text-generation", model=model, tokenizer=tokenizer)
 
-# Function to generate the custom pitch using Dialogflow API
+generator = load_model()
+
+# Function to generate the custom pitch using the local model
 def generate_pitch(name, cause, impact, personal_message):
-    session_id = "unique-session-id"  # You can generate a unique session ID if needed
-    session = client.session_path(project_id, session_id)
-
     prompt = f"""
     Write a personalized donation pitch for a potential donor:
 
@@ -22,16 +23,9 @@ def generate_pitch(name, cause, impact, personal_message):
 
     Pitch:
     """
-
-    text_input = dialogflow.TextInput(text=prompt)
-    query_input = dialogflow.QueryInput(text=text_input, language_code='en')  # language_code should be passed here
-
-    try:
-        response = client.detect_intent(session=session, query_input=query_input)
-        pitch = response.query_result.fulfillment_text.strip()
-        return pitch
-    except Exception as e:
-        return f"An error occurred: {e}"
+    response = generator(prompt, max_length=150, num_return_sequences=1)
+    pitch = response[0]["generated_text"].strip()
+    return pitch
 
 # Streamlit UI
 st.title("Custom Donation Pitch Generator")
