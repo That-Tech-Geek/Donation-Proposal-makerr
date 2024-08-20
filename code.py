@@ -1,22 +1,27 @@
 import streamlit as st
 import nltk
-from nltk.chat.util import Chat, reflections
+from nltk.tokenize import word_tokenize
+from nltk.corpus import wordnet
 
-# Define pairs of patterns and responses
-pairs = [
-    (r'hi|hello', ['Hello!', 'Hi there!']),
-    (r'how are you?', ['I am doing well, thank you!', 'I am great, thanks for asking!']),
-    (r'what is your name?', ['I am a chatbot created by NLTK.', 'You can call me NLTK Bot.']),
-    (r'quit', ['Bye! Take care.']),
-]
+# Download required NLTK data files (do this once)
+nltk.download('punkt')
+nltk.download('wordnet')
 
-# Create the chatbot
-chatbot = Chat(pairs, reflections)
+# Function to generate a simple response
+def generate_response(user_input):
+    tokens = word_tokenize(user_input.lower())
+    synonyms = set()
 
-# Function to get a response from the chatbot
-def get_response(user_input):
-    response = chatbot.respond(user_input)
-    return response if response else "Sorry, I didn't understand that."
+    # Find synonyms for each token
+    for token in tokens:
+        for syn in wordnet.synsets(token):
+            for lemma in syn.lemmas():
+                synonyms.add(lemma.name())
+
+    if synonyms:
+        return f"Interesting! You mentioned: {', '.join(synonyms)}"
+    else:
+        return "Sorry, I didn't quite understand that."
 
 # Streamlit UI
 st.title("Streamlit Chatbot with NLTK")
@@ -28,7 +33,7 @@ user_message = st.text_input("You:")
 if st.button("Send"):
     if user_message:
         with st.spinner("Thinking..."):
-            response = get_response(user_message)
+            response = generate_response(user_message)
         st.text_area("Bot:", value=response, height=200, max_chars=None)
     else:
         st.error("Please enter a message.")
