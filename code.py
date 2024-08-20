@@ -1,20 +1,17 @@
 import streamlit as st
-from chatterbot import ChatBot
-from chatterbot.trainers import ChatterBotCorpusTrainer
+from transformers import pipeline
 
 # Initialize the chatbot
 def create_chatbot():
-    bot = ChatBot("StreamlitBot", logic_adapters=["chatterbot.logic.BestMatch"])
-    trainer = ChatterBotCorpusTrainer(bot)
-    trainer.train("chatterbot.corpus.english")  # Train the bot with the English corpus
-    return bot
+    chatbot_pipeline = pipeline("conversational", model="microsoft/DialoGPT-medium")
+    return chatbot_pipeline
 
 chatbot = create_chatbot()
 
 # Function to get a response from the chatbot
 def get_response(user_input):
-    response = chatbot.get_response(user_input)
-    return str(response)
+    response = chatbot(user_input)
+    return response[0]['generated_text']
 
 # Streamlit UI
 st.title("Streamlit Chatbot")
