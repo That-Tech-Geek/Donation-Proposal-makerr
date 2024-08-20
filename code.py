@@ -1,47 +1,33 @@
 import streamlit as st
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
+from chatterbot import ChatBot
+from chatterbot.trainers import ChatterBotCorpusTrainer
 
-# Load the LLaMA model and tokenizer
+# Initialize the chatbot
 @st.cache_resource
-def load_model():
-    model_name = "facebook/opt-2.7b"  # Replace with the model you want to use
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForCausalLM.from_pretrained(model_name)
-    return pipeline("text-generation", model=model, tokenizer=tokenizer)
+def create_chatbot():
+    bot = ChatBot("StreamlitBot", logic_adapters=["chatterbot.logic.BestMatch"])
+    trainer = ChatterBotCorpusTrainer(bot)
+    trainer.train("chatterbot.corpus.english")  # Train the bot with the English corpus
+    return bot
 
-generator = load_model()
+chatbot = create_chatbot()
 
-# Function to generate the custom pitch using the local model
-def generate_pitch(name, cause, impact, personal_message):
-    prompt = f"""
-    Write a personalized donation pitch for a potential donor:
-
-    Donor Name: {name}
-    Cause: {cause}
-    Impact: {impact}
-    Personal Message: {personal_message}
-
-    Pitch:
-    """
-    response = generator(prompt, max_length=150, num_return_sequences=1)
-    pitch = response[0]["generated_text"].strip()
-    return pitch
+# Function to get a response from the chatbot
+def get_response(user_input):
+    response = chatbot.get_response(user_input)
+    return str(response)
 
 # Streamlit UI
-st.title("Custom Donation Pitch Generator")
+st.title("Streamlit Chatbot")
 
-# Input fields for the donor information
-name = st.text_input("Donor's Name")
-cause = st.text_input("Cause")
-impact = st.text_area("Describe the Impact")
-personal_message = st.text_area("Add a Personal Message")
+# Input field for user message
+user_message = st.text_input("You:")
 
-# Generate pitch when the button is clicked
-if st.button("Generate Pitch"):
-    if name and cause and impact and personal_message:
-        with st.spinner("Generating your custom pitch..."):
-            pitch = generate_pitch(name, cause, impact, personal_message)
-        st.subheader("Generated Pitch")
-        st.write(pitch)
+# Display the chatbot response
+if st.button("Send"):
+    if user_message:
+        with st.spinner("Thinking..."):
+            response = get_response(user_message)
+        st.text_area("Bot:", value=response, height=200, max_chars=None)
     else:
-        st.error("Please fill in all fields before generating the pitch.")
+        st.error("Please enter a message.")
