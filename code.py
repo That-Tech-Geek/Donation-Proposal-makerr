@@ -1,17 +1,28 @@
 import streamlit as st
-from transformers import pipeline
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
 
 # Initialize the chatbot
 def create_chatbot():
-    chatbot_pipeline = pipeline("conversational", model="microsoft/DialoGPT-medium")
-    return chatbot_pipeline
+    tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
+    model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
+    return tokenizer, model
 
-chatbot = create_chatbot()
+tokenizer, model = create_chatbot()
 
 # Function to get a response from the chatbot
 def get_response(user_input):
-    response = chatbot(user_input)
-    return response[0]['generated_text']
+    # Encode the new user input, add the EOS token, and return a tensor in PyTorch
+    new_user_input_ids = tokenizer.encode(user_input + tokenizer.eos_token, return_tensors='pt')
+
+    # Append the new user input tokens to the chat history
+    bot_input_ids = new_user_input_ids
+
+    # Generate a response using the model
+    chat_history_ids = model.generate(bot_input_ids, max_length=1000, pad_token_id=tokenizer.eos_token_id)
+
+    # Decode the response and return it
+    return tokenizer.decode(chat_history_ids[:, bot_input_ids.shape[-1]:][0], skip_special_tokens=True)
 
 # Streamlit UI
 st.title("Streamlit Chatbot")
