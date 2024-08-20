@@ -3,7 +3,6 @@ from chatterbot import ChatBot
 from chatterbot.trainers import ChatterBotCorpusTrainer
 
 # Initialize the chatbot
-@st.cache_resource
 def create_chatbot():
     bot = ChatBot("StreamlitBot", logic_adapters=["chatterbot.logic.BestMatch"])
     trainer = ChatterBotCorpusTrainer(bot)
