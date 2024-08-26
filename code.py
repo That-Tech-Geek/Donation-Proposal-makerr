@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # Define the Rasa API endpoint
-RASA_API_URL = st.secrets(rasa-url)
+RASA_API_URL = st.secrets('rasa-url')
 
 # Function to interact with Rasa and get a response
 def get_rasa_response(message):
